@@ -34,6 +34,7 @@ class Agent
         int deepest_level; 
         int total_of_stored_nodes;
         int max_limit;                     //Holds the allowed depth limit
+        pair<int, int> new_initial_pos;
                
         
         void print_map(vector<vector<string> >& a_map);

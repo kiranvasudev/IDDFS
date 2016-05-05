@@ -28,6 +28,7 @@ Agent::Agent(vector<vector<string> > map, const pair<int, int> initial_pos,
 				number_of_goals), max_number_of_stored_nodes(0), number_of_visited_nodes(
 				0), total_of_stored_nodes(0), deepest_level(0) {
 	max_limit = map_rows * map_cols;
+	new_initial_pos = initial_pos;
 }
 
 Agent::~Agent() {
@@ -70,6 +71,7 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 
 	// if the current node is a goal node then call function backtrack_path (print path) and return true...
 	if (map[row][column] == goalStr) {
+		new_initial_pos = make_pair(row, column);
 		backtrack_path(current_path);
 		return true;
 
@@ -155,8 +157,11 @@ bool Agent::depth_limited_seach(int limit) {
 			// get a copy of an empty_map
 			map = empty_map;
 			// run through the map starting at the initial pos and a level 0.
-			if (recursive_dls(initial_pos, goal, -1, i, current_path)) {
+			if (recursive_dls(new_initial_pos, goal, -1, i, current_path)) {
 				break;
+			} else {
+				if (i == max_limit - 1)
+					cout << "Goal " << goal << " NOT found" << endl;
 			}
 		}
 
@@ -182,7 +187,6 @@ void Agent::backtrack_path(vector<pair<int, int> > current_path) {
 
 	pair<int, int> current_data;
 
-	cout << "path: " << endl;
 	for (unsigned i = 0; i < current_path.size(); ++i) {
 //		cout << current_path[i].first << ", " << current_path[i].second << endl;
 		current_data = current_path[i];
