@@ -126,6 +126,7 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 		}
 	}
 
+	// NOTE TO MYSELF: Are the following two lines correct or necessary?
 	number_of_visited_nodes++;
 	map[current_node.first][current_node.second] = "0";
 	return false;
