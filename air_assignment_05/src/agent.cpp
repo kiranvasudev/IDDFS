@@ -59,8 +59,17 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 
 	current_level += 1;
 
-// push the current node to the path
+	// check if the deepest level is still the deepest, if not, then update
+	if (deepest_level < current_level) {
+		deepest_level = current_level;
+	}
+
+	// push the current node to the path
 	current_path.push_back(current_node);
+
+	// NOTE TO MYSELF: the following two values have to be placed correct
+	number_of_visited_nodes += 1;
+	total_of_stored_nodes += 1;
 
 	// convert current goal-int in string to make it comparable with the current field value
 	std::string goalStr = std::to_string(goal);
@@ -126,11 +135,10 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 				return true;
 			}
 		}
+
 	}
 
-	// NOTE TO MYSELF: Are the following two lines correct or necessary?
-	number_of_visited_nodes++;
-	map[current_node.first][current_node.second] = "0";
+//	map[current_node.first][current_node.second] = "0";
 	return false;
 //TODO
 
@@ -168,6 +176,9 @@ bool Agent::depth_limited_seach(int limit) {
 		// increase the goal.
 		goal += 1;
 	}
+
+	// print final results
+	print_final_results();
 	return true;
 }
 
