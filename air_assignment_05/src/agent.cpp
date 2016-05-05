@@ -55,9 +55,10 @@ void Agent::print_map(vector<vector<string> >& a_map) {
 
 bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 		int current_level, int limit, vector<pair<int, int> > current_path) {
-	cout << "current level " << current_level << endl;
 
-	// push the current node to the path
+	current_level += 1;
+
+// push the current node to the path
 	current_path.push_back(current_node);
 
 	// convert current goal-int in string to make it comparable with the current field value
@@ -72,7 +73,7 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 		backtrack_path(current_path);
 		return true;
 
-		// ...otherwise mark the field. NOTE FOR MYSELF: is this necessary?
+		// ...otherwise mark the field.
 	} else {
 		map[row][column] = "-";
 	}
@@ -87,40 +88,47 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 		if (map[row][column + 1] == " "
 				|| map[row][column + 1]
 						== goalStr/*should compare with the current goal 'goalStr'*/) {
-			recursive_dls(make_pair(row, column + 1), goal, current_level + 1,
-					limit, current_path);
+			if (recursive_dls(make_pair(row, column + 1), goal, current_level,
+					limit, current_path)) {
+				return true;
+			}
 		}
 
 		// .. check the left child by calling the method with the child node and an increased level
 		if (map[row][column - 1] == " "
 				|| map[row][column - 1]
 						== goalStr/*should compare with the current goal 'goalStr'*/) {
-			recursive_dls(make_pair(row, column - 1), goal, current_level + 1,
-					limit, current_path);
+			if (recursive_dls(make_pair(row, column - 1), goal, current_level,
+					limit, current_path)) {
+				return true;
+			}
 		}
 
-		// .. check the up child by calling the method with the child node and an increased level
+		// .. check the down child by calling the method with the child node and an increased level
 		if (map[row + 1][column] == " "
 				|| map[row + 1][column]
 						== goalStr/*should compare with the current goal 'goalStr'*/) {
-			recursive_dls(make_pair(row + 1, column), goal, current_level + 1,
-					limit, current_path);
+			if (recursive_dls(make_pair(row + 1, column), goal, current_level,
+					limit, current_path)) {
+				return true;
+			}
+
 		}
 
-		// ... check the down child by calling the method with the child node and an increased level
+		// ... check the up child by calling the method with the child node and an increased level
 		if (map[row - 1][column] == " "
 				|| map[row - 1][column]
 						== goalStr/*should compare with the current goal 'goalStr'*/) {
-			recursive_dls(make_pair(row - 1, column), goal, current_level + 1,
-					limit, current_path);
+			if (recursive_dls(make_pair(row - 1, column), goal, current_level,
+					limit, current_path)) {
+				return true;
+			}
 		}
 	}
 
-	// NOTE FOR MYSELF: this part will be never reached ! (?)
-	backtrack_path(current_path);
 	number_of_visited_nodes++;
 	map[current_node.first][current_node.second] = "0";
-
+	return false;
 //TODO
 
 //Notes:
@@ -136,23 +144,22 @@ bool Agent::depth_limited_seach(int limit) {
 	int goal = 1;
 
 	// run through the map until all goals are found or the limit reaches the max_limit
-	while (limit != max_limit and goal != number_of_goals) {
+	while (goal != number_of_goals + 1) {
 
 		// make a (new) path for every iteration
 		vector<pair<int, int> > current_path;
 
-		// get a copy of an empty_map
-		map = empty_map;
+		// look for the goal until the max_limit is reached
+		for (int i = 0; i < max_limit; ++i) {
+			// get a copy of an empty_map
+			map = empty_map;
+			// run through the map starting at the initial pos and a level 0.
+			if (recursive_dls(initial_pos, goal, -1, i, current_path)) {
+				break;
+			}
+		}
 
-		// run through the map starting at the initial pos and a level 0.
-		/*NOTE FOR MYSELF: The goal will changed for every iteration.
-		 * It will never find a goal and stop after max 9 iteration <-- that's wrong and need to be changed.*/
-		recursive_dls(initial_pos, goal, 0, limit, current_path);
-
-		// increase the limit with every run. NOTE FOR MYSELF: Should be the whole map check for every goal, or in total?
-		limit += 1;
-
-		// increas the goal. That's not correct and need to be changed. Look at the previous notes
+		// increase the goal.
 		goal += 1;
 	}
 	return true;
