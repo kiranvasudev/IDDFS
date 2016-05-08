@@ -67,7 +67,6 @@ bool Agent::recursive_dls(pair<int, int> current_node, int goal,
 	// push the current node to the path
 	current_path.push_back(current_node);
 
-	// NOTE TO MYSELF: the following two values have to be placed correct
 	number_of_visited_nodes += 1;
 	total_of_stored_nodes += 1;
 
